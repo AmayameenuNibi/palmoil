@@ -1,7 +1,5 @@
 import express from 'express';
 import multer from 'multer';
-import { LLMChain } from "langchain/chains";
-import { OpenAI } from "@langchain/openai";
 import { 
   createCompany, 
   getCompanies, 
