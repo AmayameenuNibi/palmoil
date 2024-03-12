@@ -1,52 +1,44 @@
-{
-    "name": "back",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "type": "module",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "engines": {
-        "node": ">=18"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "18": "^0.0.0",
-        "@emailjs/browser": "^4.3.1",
-        "@langchain/community": "^0.0.27",
-        "@langchain/core": "^0.1.27",
-        "@langchain/google-genai": "^0.0.2",
-        "@sendgrid/mail": "^8.1.1",
-        "axios": "^1.6.7",
-        "body-parser": "^1.20.2",
-        "cors": "^2.8.5", 
-        "cookie-parser": "^1.4.5",
-        "multer": "^1.4.4",
-        "dotenv": "^16.4.1",
-        "express": "^4.18.2",
-        "express-session": "^1.18.0",
-        "googleapis": "^126.0.1",
-        "is-empty": "^1.2.0",
-        "jspdf": "^2.5.1",
-        "jspdf-autotable": "^3.8.2",
-        "langchain": "^0.1.17",
-        "mongoose": "^8.1.2",
-        "nodemailer": "^6.9.9",
-        "openai": "^4.28.0",
-        "passport": "^0.7.0",
-        "passport-facebook": "^3.0.0",
-        "passport-google-oauth20": "^2.0.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "svix": "^1.16.0",
-        "validator": "^13.11.0",
-        "path": "^0.12.7",
-        "async-handler": "^1.0.0",
-        "bcryptjs": "^2.4.3",
-        "jsonwebtoken": "^8.5.1",
-        "express-async-handler": "^1.1.4"
-    }
-}
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import cookieParser from 'cookie-parser';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import userRoutes from './routes/userRoutes.js';
+import countryRoutes from './routes/countryRoutes.js';
+import siteRoutes from './routes/siteRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import companyRoutes from './routes/companyRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import passport from "./utils/passport.js";
+import path from 'path';
+
+dotenv.config();
+
+const port = process.env.PORT || 5000;
+
+connectDB();
+
+const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
+passport(app);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+const dirname = path.resolve();
+app.use("/uploads", express.static('uploads'))
+
+app.use('/api/users', userRoutes);
+app.use('/api/countries', countryRoutes);
+app.use('/api/sites', siteRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/companies', companyRoutes);
+app.use("/auth", authRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
+
+app.listen(port, () => console.log(`Server started on port ${port}`));
