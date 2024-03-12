@@ -46,6 +46,7 @@
         "path": "^0.12.7",
         "async-handler": "^1.0.0",
         "bcryptjs": "^2.4.3",
-        "jsonwebtoken": "^8.5.1"
+        "jsonwebtoken": "^8.5.1",
+        "express-async-handler": "^1.1.4"
     }
 }
